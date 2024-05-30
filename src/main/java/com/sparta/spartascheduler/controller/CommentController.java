@@ -17,4 +17,9 @@ public class CommentController {
     private CommentResponseDto createComment(@RequestBody CommentRequestDto requestDto){
         return commentService.createComment(requestDto);
     }
+
+    @PutMapping("/comment/{id}")
+    private CommentResponseDto updateComment(@PathVariable Long id, @RequestBody CommentRequestDto requestDto) {
+        return commentService.updateComment(id, requestDto);
+    }
 }

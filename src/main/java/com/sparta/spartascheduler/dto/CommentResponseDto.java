@@ -2,6 +2,7 @@ package com.sparta.spartascheduler.dto;
 
 import com.sparta.spartascheduler.entitiy.Comment;
 import lombok.Getter;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +13,7 @@ public class CommentResponseDto {
     private String username;
     private Long scheduleId;
     private LocalDateTime createdAt;
+    @LastModifiedDate
     private LocalDateTime modifiedAt;
 
     public CommentResponseDto(Comment comment) {
