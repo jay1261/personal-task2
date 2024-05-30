@@ -18,21 +18,25 @@ public class Schedule extends Timestamped{
     @Column(nullable = false, length = 500)
     private String contents;
     @Column(nullable = false)
-    private String userName;
+    private String username;
     @Column(nullable = false)
     private String password;
+
+    // 양방향시 필요
+//    @OneToMany(mappedBy = "schedule")
+//    List<Comment> commentList = new ArrayList<>();
 
     public Schedule(ScheduleRequestDto scheduleRequestDto) {
         this.id = scheduleRequestDto.getId();
         this.title = scheduleRequestDto.getTitle();
         this.contents = scheduleRequestDto.getContents();
-        this.userName = scheduleRequestDto.getUserName();
+        this.username = scheduleRequestDto.getUsername();
         this.password = scheduleRequestDto.getPassword();
     }
 
     public void update(ScheduleRequestDto scheduleRequestDto) {
         this.title = scheduleRequestDto.getTitle();
         this.contents = scheduleRequestDto.getContents();
-        this.userName = scheduleRequestDto.getUserName();
+        this.username = scheduleRequestDto.getUsername();
     }
 }
