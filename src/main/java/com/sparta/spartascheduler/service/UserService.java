@@ -1,9 +1,12 @@
 package com.sparta.spartascheduler.service;
 
+import com.sparta.spartascheduler.dto.LoginRequestDto;
 import com.sparta.spartascheduler.dto.UserRequestDto;
 import com.sparta.spartascheduler.entitiy.User;
 import com.sparta.spartascheduler.entitiy.UserRoleEnum;
+import com.sparta.spartascheduler.jwt.JwtUtil;
 import com.sparta.spartascheduler.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
@@ -42,5 +46,20 @@ public class UserService {
         userRepository.save(user);
 
         return new ResponseEntity<String>("회원가입에 성공했습니다.", HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<String> login(LoginRequestDto requestDto, HttpServletResponse response) {
+        User user = userRepository.findByUsername(requestDto.getUsername()).orElseThrow(
+                () -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, "등록된 사용자가 없습니다.")
+        );
+
+        if (!user.getPassword().equals(requestDto.getPassword())){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+        }
+
+        String token = jwtUtil.createToken(user.getUsername(), user.getRole());
+        jwtUtil.addJwtToCookie(token, response);
+
+        return new ResponseEntity<String>("로그인 성공", HttpStatus.OK);
     }
 }

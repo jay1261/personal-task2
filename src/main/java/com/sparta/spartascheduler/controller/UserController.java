@@ -1,7 +1,9 @@
 package com.sparta.spartascheduler.controller;
 
+import com.sparta.spartascheduler.dto.LoginRequestDto;
 import com.sparta.spartascheduler.dto.UserRequestDto;
 import com.sparta.spartascheduler.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,5 +25,9 @@ public class UserController {
         return userService.createUser(requestDto);
     }
 
+    @PostMapping("/user/login")
+    public ResponseEntity<String> login(@RequestBody @Valid LoginRequestDto requestDto, HttpServletResponse response) {
+        return userService.login(requestDto, response);
+    }
 
 }
