@@ -9,8 +9,9 @@ import lombok.Getter;
 public class CommentRequestDto {
     @NotBlank(message = "내용이 비어있습니다.")
     private String contents;
-    @NotBlank(message = "유저id를 입력해주세요")
-    private String username;
+//    로그인 추가로 삭제
+//    @NotBlank(message = "유저id를 입력해주세요")
+//    private String username;
     @NotNull(message = "일정의 id를 입력해주세요")
     private Long scheduleId;
 }

@@ -28,9 +28,9 @@ public class Comment extends Timestamped{
     private Schedule schedule;
 
 
-    public Comment(CommentRequestDto requestDto) {
+    public Comment(CommentRequestDto requestDto, String username) {
         this.contents = requestDto.getContents();
-        this.username = requestDto.getUsername();
+        this.username = username;
     }
 
     public void update(CommentRequestDto requestDto) {

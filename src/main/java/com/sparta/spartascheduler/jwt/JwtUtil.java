@@ -2,7 +2,6 @@
 package com.sparta.spartascheduler.jwt;
 
 import com.sparta.spartascheduler.entitiy.UserRoleEnum;
-import com.sparta.spartascheduler.exception.GlobalExceptionHandler;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -10,18 +9,11 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
