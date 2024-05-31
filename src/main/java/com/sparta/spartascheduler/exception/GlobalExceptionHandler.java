@@ -2,12 +2,14 @@ package com.sparta.spartascheduler.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,15 +31,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Map<String, String>> handleBadRequestException(MethodArgumentNotValidException e) {
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<Map<String, String>> handleBadRequestException(HttpClientErrorException e) {
         Map<String, String> error = new HashMap<>();
-        e.getAllErrors().forEach(
-                c -> {
-                    error.put(((FieldError) c).getField(), c.getDefaultMessage());
-                    log.error(c.getDefaultMessage());
-                }
-        );
+
+        log.error("HttpClientErrorException.BadRequest", e);
+        error.put(e.getStatusCode().toString(), e.getMessage());
 
         return ResponseEntity.badRequest().body(error);
     }
