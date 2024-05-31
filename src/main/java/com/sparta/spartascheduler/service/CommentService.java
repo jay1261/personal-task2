@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -81,5 +82,11 @@ public class CommentService {
         commentRepository.delete(comment);
 
         return new ResponseEntity<>("삭제가 완료되었습니다.", HttpStatus.OK);
+    }
+
+    public List<CommentResponseDto> getAllComments() {
+        List<Comment> all = commentRepository.findAll();
+
+        return all.stream().map(CommentResponseDto::new).toList();
     }
 }

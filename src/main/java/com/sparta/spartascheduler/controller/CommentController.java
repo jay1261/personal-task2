@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -20,17 +22,23 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/comment")
-    private CommentResponseDto createComment(@RequestBody @Valid CommentRequestDto requestDto, HttpServletRequest request){
+    public CommentResponseDto createComment(@RequestBody @Valid CommentRequestDto requestDto, HttpServletRequest request){
         return commentService.createComment(requestDto, request);
     }
 
     @PutMapping("/comment/{id}")
-    private CommentResponseDto updateComment(@PathVariable Long id, @RequestBody @Valid CommentRequestDto requestDto, HttpServletRequest request) {
+    public CommentResponseDto updateComment(@PathVariable Long id, @RequestBody @Valid CommentRequestDto requestDto, HttpServletRequest request) {
         return commentService.updateComment(id, requestDto, request);
     }
 
     @DeleteMapping("/comment/{id}")
-    private ResponseEntity<String> deleteComment(@PathVariable Long id, @RequestBody @Valid CommentRequestDto requestDto, HttpServletRequest request){
+    public ResponseEntity<String> deleteComment(@PathVariable Long id, @RequestBody @Valid CommentRequestDto requestDto, HttpServletRequest request){
         return commentService.deleteComment(id, requestDto, request);
     }
+
+    @GetMapping("/comments")
+    public List<CommentResponseDto> getAllComments(){
+        return commentService.getAllComments();
+    }
+
 }
