@@ -26,6 +26,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final ScheduleService scheduleService;
 
+    @Transactional
     public CommentResponseDto createComment(CommentRequestDto requestDto, User loginUser) {
         // 일정이 DB에 저장되지 않은 경우.
         Schedule schedule = scheduleService.findById(requestDto.getScheduleId());
