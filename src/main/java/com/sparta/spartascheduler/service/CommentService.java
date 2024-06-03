@@ -25,13 +25,12 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final ScheduleRepository scheduleRepository;
 
-    public CommentResponseDto createComment(CommentRequestDto requestDto, HttpServletRequest request) {
+    public CommentResponseDto createComment(CommentRequestDto requestDto, User loginUser) {
         // 일정이 DB에 저장되지 않은 경우.
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId()).orElseThrow(
                 () -> new IllegalArgumentException("없는 일정 id 입니다.")
         );
 
-        User loginUser = (User) request.getAttribute("user");
         Comment comment = new Comment(requestDto, loginUser.getUsername());
         comment.setSchedule(schedule);
 
@@ -41,7 +40,7 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto updateComment(Long id, CommentRequestDto requestDto, HttpServletRequest request) {
+    public CommentResponseDto updateComment(Long id, CommentRequestDto requestDto, User loginUser) {
 
         // 일정이나 댓글이 DB에 저장되지 않은 경우
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId()).orElseThrow(
@@ -53,7 +52,6 @@ public class CommentService {
         );
 
         // 선택한 댓글의 사용자가 현재 사용자와 일치하지 않은 경우
-        User loginUser = (User) request.getAttribute("user");
         if(!comment.getUsername().equals(loginUser.getUsername())){
             throw new IllegalArgumentException("댓글의 작성자가 아닙니다. 수정할 수 없습니다.");
         }
@@ -63,7 +61,7 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
-    public ResponseEntity<String> deleteComment(Long id, CommentRequestDto requestDto, HttpServletRequest request) {
+    public ResponseEntity<String> deleteComment(Long id, CommentRequestDto requestDto, User loginUser) {
         // 일정이나 댓글이 DB에 저장되지 않은 경우
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId()).orElseThrow(
                 () -> new IllegalArgumentException("선택한 일정은 존재하지 않습니다.")
@@ -74,7 +72,6 @@ public class CommentService {
         );
 
         // 선택한 댓글의 사용자가 현재 사용자와 일치하지 않은 경우
-        User loginUser = (User) request.getAttribute("user");
         if(!comment.getUsername().equals(loginUser.getUsername())){
             throw new IllegalArgumentException("댓글의 작성자가 아닙니다. 수정할 수 없습니다.");
         }

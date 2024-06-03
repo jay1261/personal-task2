@@ -3,6 +3,7 @@ package com.sparta.spartascheduler.controller;
 import com.sparta.spartascheduler.dto.CommentRequestDto;
 import com.sparta.spartascheduler.dto.CommentResponseDto;
 import com.sparta.spartascheduler.entitiy.Comment;
+import com.sparta.spartascheduler.entitiy.User;
 import com.sparta.spartascheduler.service.CommentService;
 import jakarta.persistence.Version;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,17 +24,20 @@ public class CommentController {
 
     @PostMapping("/comment")
     public CommentResponseDto createComment(@RequestBody @Valid CommentRequestDto requestDto, HttpServletRequest request){
-        return commentService.createComment(requestDto, request);
+        User loginUser = (User) request.getAttribute("user");
+        return commentService.createComment(requestDto, loginUser);
     }
 
     @PutMapping("/comment/{id}")
     public CommentResponseDto updateComment(@PathVariable Long id, @RequestBody @Valid CommentRequestDto requestDto, HttpServletRequest request) {
-        return commentService.updateComment(id, requestDto, request);
+        User loginUser = (User) request.getAttribute("user");
+        return commentService.updateComment(id, requestDto, loginUser);
     }
 
     @DeleteMapping("/comment/{id}")
     public ResponseEntity<String> deleteComment(@PathVariable Long id, @RequestBody @Valid CommentRequestDto requestDto, HttpServletRequest request){
-        return commentService.deleteComment(id, requestDto, request);
+        User loginUser = (User) request.getAttribute("user");
+        return commentService.deleteComment(id, requestDto, loginUser);
     }
 
     @GetMapping("/comments")
