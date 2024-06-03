@@ -2,6 +2,7 @@ package com.sparta.spartascheduler.jwt;
 
 import com.sparta.spartascheduler.entitiy.User;
 import com.sparta.spartascheduler.repository.UserRepository;
+import com.sparta.spartascheduler.service.UserService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,17 +21,19 @@ import java.io.IOException;
 @Order(2)
 public class AuthFilter implements Filter {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
 
-    public AuthFilter(UserRepository userRepository, JwtUtil jwtUtil) {
-        this.userRepository = userRepository;
+    public AuthFilter(UserService userService, JwtUtil jwtUtil) {
+        this.userService = userService;
         this.jwtUtil = jwtUtil;
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+
         String url = httpServletRequest.getRequestURI();
         System.out.println("김예현: "+httpServletRequest.getMethod());
 
@@ -51,20 +54,17 @@ public class AuthFilter implements Filter {
 
                 // 토큰 검증
                 if (!jwtUtil.validateToken(token)) {
-                    throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "토큰이 유효하지 않습니다.");
+                    httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "토큰이 유효하지 않습니다.");
                 }
 
                 // 토큰에서 사용자 정보 가져오기
                 Claims info = jwtUtil.getUserInfoFromToken(token);
-
-                User user = userRepository.findByUsername(info.getSubject()).orElseThrow(() ->
-                        new HttpClientErrorException(HttpStatus.BAD_REQUEST, "회원을 찾을 수 없습니다.")
-                );
+                User user = userService.findByUsername(info.getSubject());
 
                 request.setAttribute("user", user);
                 chain.doFilter(request, response); // 다음 Filter 로 이동
             } else {
-                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "토큰을 찾을 수 없습니다.");
+                httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "토큰을 찾을 수 없습니다");
             }
         }
     }

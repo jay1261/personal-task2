@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,13 +24,11 @@ import java.util.Optional;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final ScheduleRepository scheduleRepository;
+    private final ScheduleService scheduleService;
 
     public CommentResponseDto createComment(CommentRequestDto requestDto, User loginUser) {
         // 일정이 DB에 저장되지 않은 경우.
-        Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId()).orElseThrow(
-                () -> new IllegalArgumentException("없는 일정 id 입니다.")
-        );
+        Schedule schedule = scheduleService.findById(requestDto.getScheduleId());
 
         Comment comment = new Comment(requestDto, loginUser.getUsername());
         comment.setSchedule(schedule);
@@ -43,17 +42,13 @@ public class CommentService {
     public CommentResponseDto updateComment(Long id, CommentRequestDto requestDto, User loginUser) {
 
         // 일정이나 댓글이 DB에 저장되지 않은 경우
-        Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId()).orElseThrow(
-                () -> new IllegalArgumentException("선택한 일정은 존재하지 않습니다.")
-        );
+        scheduleService.findById(requestDto.getScheduleId());
 
-        Comment comment = commentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("선택한 댓글은 존재하지 않습니다.")
-        );
+        Comment comment = findById(id);
 
         // 선택한 댓글의 사용자가 현재 사용자와 일치하지 않은 경우
         if(!comment.getUsername().equals(loginUser.getUsername())){
-            throw new IllegalArgumentException("댓글의 작성자가 아닙니다. 수정할 수 없습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "댓글의 작성자가 아닙니다. 수정할 수 없습니다.");
         }
 
         comment.update(requestDto);
@@ -63,17 +58,13 @@ public class CommentService {
 
     public ResponseEntity<String> deleteComment(Long id, CommentRequestDto requestDto, User loginUser) {
         // 일정이나 댓글이 DB에 저장되지 않은 경우
-        Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId()).orElseThrow(
-                () -> new IllegalArgumentException("선택한 일정은 존재하지 않습니다.")
-        );
+        scheduleService.findById(requestDto.getScheduleId());
 
-        Comment comment = commentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("선택한 댓글은 존재하지 않습니다.")
-        );
+        Comment comment = findById(id);
 
         // 선택한 댓글의 사용자가 현재 사용자와 일치하지 않은 경우
         if(!comment.getUsername().equals(loginUser.getUsername())){
-            throw new IllegalArgumentException("댓글의 작성자가 아닙니다. 수정할 수 없습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "댓글의 작성자가 아닙니다. 수정할 수 없습니다.");
         }
 
         commentRepository.delete(comment);
@@ -85,5 +76,11 @@ public class CommentService {
         List<Comment> all = commentRepository.findAll();
 
         return all.stream().map(CommentResponseDto::new).toList();
+    }
+
+    private Comment findById(Long id){
+        return commentRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "선택한 일정은 존재하지 않습니다.")
+        );
     }
 }

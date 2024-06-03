@@ -7,7 +7,9 @@ import com.sparta.spartascheduler.repository.ScheduleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,6 +60,12 @@ public class ScheduleService {
     private Schedule findScheduleByIdAndPassword(Long id, String password){
         return scheduleRepository.findByIdIsAndPassword(id, password).orElseThrow(
                 ()-> new IllegalArgumentException("선택한 일정이 없거나, 비밀번호가 맞지 않습니다.")
+        );
+    }
+
+    public Schedule findById(Long id){
+        return scheduleRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "선택한 일정은 존재하지 않습니다.")
         );
     }
 }

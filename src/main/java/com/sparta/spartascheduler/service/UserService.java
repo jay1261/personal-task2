@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -61,5 +62,11 @@ public class UserService {
         jwtUtil.addJwtToCookie(token, response);
 
         return new ResponseEntity<String>("로그인 성공", HttpStatus.OK);
+    }
+
+    public User findByUsername(String username){
+        return userRepository.findByUsername(username).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원을 찾을 수 없습니다.")
+        );
     }
 }
