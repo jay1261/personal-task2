@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,6 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
 
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
@@ -43,7 +45,9 @@ public class UserService {
             userRoleEnum = UserRoleEnum.ADMIN;
         }
 
-        User user = new User(requestDto, userRoleEnum);
+        String encoded = passwordEncoder.encode(requestDto.getPassword());
+
+        User user = new User(requestDto, encoded ,userRoleEnum);
         userRepository.save(user);
 
         return new ResponseEntity<String>("회원가입에 성공했습니다.", HttpStatus.CREATED);

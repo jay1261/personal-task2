@@ -28,10 +28,10 @@ public class User extends Timestamped{
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    public User(UserRequestDto requestDto, UserRoleEnum userRoleEnum) {
+    public User(UserRequestDto requestDto, String encoded, UserRoleEnum userRoleEnum) {
         this.nickname = requestDto.getNickname();
         this.username = requestDto.getUsername();
-        this.password = requestDto.getPassword();
+        this.password = encoded;
         this.role = userRoleEnum;
     }
 }
