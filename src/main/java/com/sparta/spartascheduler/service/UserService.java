@@ -53,20 +53,6 @@ public class UserService {
         return new ResponseEntity<String>("회원가입에 성공했습니다.", HttpStatus.CREATED);
     }
 
-    public ResponseEntity<String> login(LoginRequestDto requestDto, HttpServletResponse response) {
-        User user = userRepository.findByUsername(requestDto.getUsername()).orElseThrow(
-                () -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, "등록된 사용자가 없습니다.")
-        );
-
-        if (!user.getPassword().equals(requestDto.getPassword())){
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
-        }
-
-        String token = jwtUtil.createToken(user.getUsername(), user.getRole());
-        jwtUtil.addJwtToCookie(token, response);
-
-        return new ResponseEntity<String>("로그인 성공", HttpStatus.OK);
-    }
 
     public User findByUsername(String username){
         return userRepository.findByUsername(username).orElseThrow(

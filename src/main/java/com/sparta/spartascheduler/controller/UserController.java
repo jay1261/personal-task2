@@ -6,6 +6,7 @@ import com.sparta.spartascheduler.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +23,6 @@ public class UserController {
         return userService.createUser(requestDto);
     }
 
-    @PostMapping("/user/login")
-    public ResponseEntity<String> login(@RequestBody @Valid LoginRequestDto requestDto, HttpServletResponse response) {
-        return userService.login(requestDto, response);
-    }
 
     @GetMapping("/bad")
     public String bad(){
